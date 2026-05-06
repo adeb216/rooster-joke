@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rooster Joke</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ff6b35, #f7c59f, #ffe66d);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 48px 56px;
+      max-width: 520px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    .rooster { font-size: 80px; margin-bottom: 24px; }
+    .setup {
+      font-size: 1.3rem;
+      color: #333;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .punchline {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #e63946;
+      line-height: 1.5;
+      display: none;
+    }
+    button {
+      margin-top: 28px;
+      padding: 14px 36px;
+      font-size: 1rem;
+      font-weight: 600;
+      background: #ff6b35;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.2s;
+    }
+    button:hover { background: #e85a24; transform: scale(1.04); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="rooster">🐓</div>
+    <p class="setup">Why did the rooster join a band?</p>
+    <p class="punchline" id="punchline">Because he already had the <em>cock-a-doodle-do</em>!</p>
+    <button onclick="reveal()">Hear the punchline</button>
+  </div>
+  <script>
+    function reveal() {
+      document.getElementById('punchline').style.display = 'block';
+      document.querySelector('button').textContent = '🥁 Ba dum tss!';
+      document.querySelector('button').disabled = true;
+    }
+  </script>
+</body>
+</html>
