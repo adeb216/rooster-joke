@@ -3,67 +3,443 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rooster Joke</title>
+  <title>The Rooster's Comedy Hour 🐓</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sunrise-1: #1a0533;
+      --sunrise-2: #6b21a8;
+      --sunrise-3: #ea580c;
+      --sunrise-4: #fbbf24;
+      --sunrise-5: #fef3c7;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+    }
+
     body {
-      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #ff6b35, #f7c59f, #ffe66d);
-      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to top, var(--sunrise-1), var(--sunrise-2), var(--sunrise-3), var(--sunrise-4), var(--sunrise-5));
+      animation: sunriseCycle 12s ease-in-out infinite alternate;
+      position: relative;
+    }
+
+    @keyframes sunriseCycle {
+      0%   { filter: brightness(0.6) saturate(0.8); }
+      50%  { filter: brightness(1.1) saturate(1.3); }
+      100% { filter: brightness(0.85) saturate(1.0); }
+    }
+
+    /* Stars */
+    .stars {
+      position: fixed; inset: 0; pointer-events: none; overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      animation: twinkle var(--d, 3s) ease-in-out infinite alternate;
+      opacity: 0;
+    }
+    @keyframes twinkle {
+      from { opacity: 0; transform: scale(0.5); }
+      to   { opacity: var(--o, 0.8); transform: scale(1.2); }
+    }
+
+    /* Floating feathers */
+    .feather {
+      position: fixed;
+      font-size: var(--sz, 20px);
+      opacity: 0.25;
+      animation: floatFeather var(--fd, 8s) linear infinite;
+      top: -60px;
+      left: var(--fl, 50%);
+      animation-delay: var(--fde, 0s);
+      pointer-events: none;
+    }
+    @keyframes floatFeather {
+      0%   { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
+      10%  { opacity: 0.3; }
+      90%  { opacity: 0.2; }
+      100% { transform: translateY(110vh) rotate(720deg) translateX(40px); opacity: 0; }
+    }
+
+    /* Main card */
+    .scene {
+      perspective: 1200px;
+      width: min(560px, 92vw);
     }
     .card {
-      background: white;
-      border-radius: 20px;
-      padding: 48px 56px;
-      max-width: 520px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(28px) saturate(1.8);
+      -webkit-backdrop-filter: blur(28px) saturate(1.8);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 28px;
+      padding: 52px 48px 44px;
       text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.4);
+      animation: cardFloat 6s ease-in-out infinite;
     }
-    .rooster { font-size: 80px; margin-bottom: 24px; }
-    .setup {
-      font-size: 1.3rem;
-      color: #333;
-      margin-bottom: 20px;
-      line-height: 1.5;
+    @keyframes cardFloat {
+      0%, 100% { transform: translateY(0px) rotateX(0deg); }
+      50%       { transform: translateY(-10px) rotateX(1deg); }
     }
-    .punchline {
-      font-size: 1.5rem;
+
+    /* Rooster */
+    .rooster-wrap {
+      position: relative; display: inline-block; margin-bottom: 8px;
+    }
+    .rooster {
+      font-size: 96px;
+      display: block;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.4));
+      cursor: pointer;
+      transition: transform 0.15s;
+      user-select: none;
+    }
+    .rooster:hover  { transform: scale(1.08) rotate(-5deg); }
+    .rooster:active { transform: scale(0.95) rotate(5deg); }
+    .rooster.crow   { animation: crowAnim 0.6s ease; }
+    @keyframes crowAnim {
+      0%   { transform: scale(1) rotate(0deg); }
+      20%  { transform: scale(1.25) rotate(-15deg); }
+      50%  { transform: scale(1.3) rotate(10deg); }
+      80%  { transform: scale(1.1) rotate(-5deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    .speech-bubble {
+      position: absolute;
+      top: -38px; right: -64px;
+      background: white;
+      color: #ea580c;
+      font-size: 0.7rem;
       font-weight: 700;
-      color: #e63946;
-      line-height: 1.5;
-      display: none;
+      padding: 5px 10px;
+      border-radius: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      transform: scale(0.4) translateY(8px);
+      transition: opacity 0.3s, transform 0.3s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      pointer-events: none;
     }
-    button {
-      margin-top: 28px;
-      padding: 14px 36px;
-      font-size: 1rem;
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -6px; left: 20px;
+      border: 6px solid transparent;
+      border-top-color: white;
+      border-bottom: none;
+    }
+    .speech-bubble.show {
+      opacity: 1; transform: scale(1) translateY(0);
+    }
+
+    /* Counter */
+    .joke-counter {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 28px;
+    }
+
+    /* Joke text */
+    .setup {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.45rem;
+      color: rgba(255,255,255,0.95);
+      line-height: 1.55;
+      margin-bottom: 0;
+      min-height: 5rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .divider {
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+      margin: 22px auto;
+      border-radius: 2px;
+    }
+
+    .punchline {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.35rem;
+      color: #fbbf24;
+      line-height: 1.5;
+      min-height: 4rem;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transform: translateY(16px) scale(0.95);
+      transition: opacity 0.6s cubic-bezier(0.34,1.56,0.64,1), transform 0.6s cubic-bezier(0.34,1.56,0.64,1);
+      filter: drop-shadow(0 0 12px rgba(251,191,36,0.5));
+    }
+    .punchline.show {
+      opacity: 1; transform: translateY(0) scale(1);
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex; gap: 12px; justify-content: center; margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 13px 32px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
       font-weight: 600;
-      background: #ff6b35;
-      color: white;
       border: none;
       border-radius: 50px;
       cursor: pointer;
-      transition: transform 0.1s, background 0.2s;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+      letter-spacing: 0.02em;
     }
-    button:hover { background: #e85a24; transform: scale(1.04); }
+    .btn:hover  { transform: scale(1.05); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-primary {
+      background: linear-gradient(135deg, #ea580c, #f97316);
+      color: white;
+      box-shadow: 0 4px 20px rgba(234,88,12,0.5);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    /* Drumroll indicator */
+    .drumroll {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.1em;
+      margin-top: 12px;
+      height: 1.2em;
+      overflow: hidden;
+    }
+    .drumroll span {
+      display: inline-block;
+      animation: drumPulse 0.25s steps(1) infinite;
+    }
+    @keyframes drumPulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0; }
+    }
+
+    /* Confetti */
+    .confetti-piece {
+      position: fixed;
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      pointer-events: none;
+      animation: confettiFall var(--cf-d, 2s) ease-in forwards;
+      top: -20px;
+      left: var(--cf-x, 50%);
+      background: var(--cf-c, #fbbf24);
+      transform: rotate(var(--cf-r, 0deg));
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(0) rotate(0deg) scaleX(1); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(var(--cf-spin, 720deg)) scaleX(0.3); opacity: 0; }
+    }
+
+    /* Footer */
+    footer {
+      position: fixed; bottom: 20px; left: 0; right: 0;
+      text-align: center;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.08em;
+    }
   </style>
 </head>
 <body>
+
+<div class="stars" id="stars"></div>
+<div id="feathers"></div>
+
+<div class="scene">
   <div class="card">
-    <div class="rooster">🐓</div>
-    <p class="setup">Why did the rooster join a band?</p>
-    <p class="punchline" id="punchline">Because he already had the <em>cock-a-doodle-do</em>!</p>
-    <button onclick="reveal()">Hear the punchline</button>
+    <div class="rooster-wrap">
+      <div class="rooster" id="rooster" title="Click me!">🐓</div>
+      <div class="speech-bubble" id="bubble">COCK-A-DOODLE-DO!</div>
+    </div>
+
+    <div class="joke-counter" id="counter">Joke 1 of 6</div>
+
+    <p class="setup" id="setup"></p>
+    <div class="divider"></div>
+    <p class="punchline" id="punchline"></p>
+
+    <div class="drumroll" id="drumroll"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="revealBtn" onclick="revealPunchline()">🥁 Hear the Punchline</button>
+      <button class="btn btn-secondary" id="nextBtn" onclick="nextJoke()" style="display:none">Next Joke →</button>
+    </div>
   </div>
-  <script>
-    function reveal() {
-      document.getElementById('punchline').style.display = 'block';
-      document.querySelector('button').textContent = '🥁 Ba dum tss!';
-      document.querySelector('button').disabled = true;
+</div>
+
+<footer>The Rooster's Comedy Hour · All jokes are 100% free-range 🌾</footer>
+
+<script>
+  const jokes = [
+    {
+      setup: "Why did the rooster join a band?",
+      punchline: "He already had the cock-a-doodle-do!"
+    },
+    {
+      setup: "What do you call a rooster who wakes you up at the same time every morning?",
+      punchline: "An alarm cluck."
+    },
+    {
+      setup: "Why don't roosters ever get rich?",
+      punchline: "Because they work for chicken feed."
+    },
+    {
+      setup: "What do you get when you cross a rooster with a duck?",
+      punchline: "A bird that wakes you up at the quack of dawn."
+    },
+    {
+      setup: "Why did the rooster go to therapy?",
+      punchline: "He had too many unresolved cluck issues."
+    },
+    {
+      setup: "How do roosters stay in shape?",
+      punchline: "They do a lot of egg-cercise."
     }
-  </script>
+  ];
+
+  let current = 0;
+  let revealed = false;
+  let drumrollTimer = null;
+
+  function loadJoke() {
+    revealed = false;
+    const joke = jokes[current];
+    document.getElementById('setup').textContent = joke.setup;
+    document.getElementById('punchline').textContent = joke.punchline;
+    document.getElementById('punchline').classList.remove('show');
+    document.getElementById('counter').textContent = `Joke ${current + 1} of ${jokes.length}`;
+    document.getElementById('revealBtn').disabled = false;
+    document.getElementById('revealBtn').textContent = '🥁 Hear the Punchline';
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('drumroll').innerHTML = '';
+    if (drumrollTimer) clearInterval(drumrollTimer);
+  }
+
+  function revealPunchline() {
+    if (revealed) return;
+    const btn = document.getElementById('revealBtn');
+    btn.disabled = true;
+
+    // Drumroll
+    let dots = 0;
+    const roll = document.getElementById('drumroll');
+    roll.innerHTML = '<span>🥁 rrrrrr...</span>';
+    drumrollTimer = setInterval(() => {
+      dots++;
+      roll.innerHTML = `<span>${'r'.repeat(Math.min(dots * 2, 14))}...</span>`;
+    }, 120);
+
+    setTimeout(() => {
+      clearInterval(drumrollTimer);
+      roll.innerHTML = '';
+      document.getElementById('punchline').classList.add('show');
+      btn.textContent = '😂 Ha!';
+      document.getElementById('nextBtn').style.display = 'inline-block';
+      revealed = true;
+      crowRooster();
+      launchConfetti();
+    }, 1400);
+  }
+
+  function nextJoke() {
+    current = (current + 1) % jokes.length;
+    loadJoke();
+  }
+
+  // Rooster click animation
+  const roosterEl = document.getElementById('rooster');
+  const bubbleEl = document.getElementById('bubble');
+  roosterEl.addEventListener('click', () => {
+    roosterEl.classList.remove('crow');
+    void roosterEl.offsetWidth;
+    roosterEl.classList.add('crow');
+    bubbleEl.classList.add('show');
+    setTimeout(() => bubbleEl.classList.remove('show'), 1200);
+  });
+
+  function crowRooster() {
+    roosterEl.classList.remove('crow');
+    void roosterEl.offsetWidth;
+    roosterEl.classList.add('crow');
+    bubbleEl.classList.add('show');
+    setTimeout(() => bubbleEl.classList.remove('show'), 1500);
+  }
+
+  // Confetti
+  function launchConfetti() {
+    const colors = ['#fbbf24','#ea580c','#f97316','#ffffff','#a855f7','#ec4899','#34d399'];
+    for (let i = 0; i < 70; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.setProperty('--cf-x', Math.random() * 100 + 'vw');
+      el.style.setProperty('--cf-c', colors[Math.floor(Math.random() * colors.length)]);
+      el.style.setProperty('--cf-d', (1.2 + Math.random() * 1.8) + 's');
+      el.style.setProperty('--cf-r', Math.random() * 360 + 'deg');
+      el.style.setProperty('--cf-spin', (360 + Math.random() * 720) + 'deg');
+      el.style.animationDelay = Math.random() * 0.5 + 's';
+      el.style.width = (6 + Math.random() * 10) + 'px';
+      el.style.height = (6 + Math.random() * 10) + 'px';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+  }
+
+  // Stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = 1 + Math.random() * 2.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      top:${Math.random() * 60}%;
+      left:${Math.random() * 100}%;
+      --d:${2 + Math.random() * 4}s;
+      --o:${0.4 + Math.random() * 0.6};
+      animation-delay:${Math.random() * 5}s;
+    `;
+    starsEl.appendChild(s);
+  }
+
+  // Feathers
+  const featherContainer = document.getElementById('feathers');
+  const featherEmojis = ['🪶','🪶','🌾','✨'];
+  for (let i = 0; i < 10; i++) {
+    const f = document.createElement('div');
+    f.className = 'feather';
+    f.textContent = featherEmojis[Math.floor(Math.random() * featherEmojis.length)];
+    f.style.setProperty('--sz', (14 + Math.random() * 18) + 'px');
+    f.style.setProperty('--fl', Math.random() * 100 + '%');
+    f.style.setProperty('--fd', (7 + Math.random() * 8) + 's');
+    f.style.setProperty('--fde', -(Math.random() * 8) + 's');
+    featherContainer.appendChild(f);
+  }
+
+  loadJoke();
+</script>
 </body>
 </html>
